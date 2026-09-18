@@ -182,10 +182,6 @@ if (searchInput) {
 }
 
 // Close modal when clicking the 'X' button
-const closeModalBtn = document.getElementById("close-modal");
-const modal = document.getElementById("trailer-modal");
-const videoContainer = document.getElementById("video-container");
-
 if (closeModalBtn) {
     closeModalBtn.addEventListener("click", () => {
         if (modal) modal.style.display = "none";
