@@ -182,17 +182,22 @@ if (searchInput) {
 }
 
 // Close modal when clicking the 'X' button
+// Use your existing variables safely without redeclaring them
 if (closeModalBtn) {
     closeModalBtn.addEventListener("click", () => {
+        const modal = document.getElementById("trailer-modal");
+        const videoContainer = document.getElementById("video-container");
         if (modal) modal.style.display = "none";
-        if (videoContainer) videoContainer.innerHTML = ""; // Stops video playback
+        if (videoContainer) videoContainer.innerHTML = ""; // Stops the YouTube video playback
     });
 }
 
-// Close modal when clicking anywhere outside the modal content box
+// Close when clicking anywhere outside the trailer window
 window.addEventListener("click", (event) => {
+    const modal = document.getElementById("trailer-modal");
+    const videoContainer = document.getElementById("video-container");
     if (event.target === modal) {
         modal.style.display = "none";
-        if (videoContainer) videoContainer.innerHTML = ""; // Stops video playback
+        if (videoContainer) videoContainer.innerHTML = ""; // Stops the YouTube video playback
     }
 });
