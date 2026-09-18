@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Netflix Clone</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <nav class="nav" id="nav">
+            <img src="https://images.ctfassets.net/y2ske730sjqp/5QQ9SVIdc1tmkqrtFnG9U1/de758bba0f65dcc1c6bc1f31f161003d/BrandAssets_Logos_02-NSymbol.jpg?w=940" alt="Netflix Logo" class="nav__logo">
+
+            <div class="nav__search">
+                <input type="text" id="search-input" placeholder="Search movies, TV shows..." />
+            </div>
+            <img src="https://i.pinimg.com/564x/a4/c6/5f/a4c65f709d4c0cb1b4329c12beb9cd78.jpg" alt="Avatar" class="nav__avatar">
+        </nav>
+        <header class="banner" id="banner">
+            <div class="banner__contents">
+                <h1 class="banner__title" id="banner__title">Movie Title</h1>
+                <div class="banner__buttons">
+                    <button class="banner__button">Play</button>
+                    <button class="banner__button">My Lists</button>
+                </div>
+                <p class="banner__description" id="banner__description">
+                    This is a temporary dscription of the featured movie...
+                </p>
+            </div>
+            <div class="banner--fadeBottom"></div>
+        </header>
+
+        <main class="rows_container" id="rows_container">
+        </main>
+
+        <script src="app.js"></script>
+
+        <div id="trailer-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-modal">&times;</span>
+            <div id="video-container">
+                </div>
+        </div>
+    </div>
+    </body>
+</html>
