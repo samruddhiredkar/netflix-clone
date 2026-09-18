@@ -7,7 +7,7 @@ A fully responsive, dynamic Netflix streaming web application built with vanilla
 ---
 
 ## ✨ Live Demo
-👉 **[View Live Application](https://samruddhairedkar.github.io/netflix-clone/)**
+👉 **[View Live Application](https://netflix-clone-rczcxsk6t-samruddhiredkars-projects.vercel.app/)**
 
 ---
 
