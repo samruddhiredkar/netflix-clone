@@ -3,8 +3,9 @@ const API_KEY = "39861cfd811f742259e828847ff86b9c";
 const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 
 // Helper function to properly encode the URL so the proxy doesn't strip your API key
+// Helper function using a different, Vercel-friendly CORS proxy
 function getProxyUrl(endpoint) {
-    return `https://api.allorigins.win/raw?url=${encodeURIComponent(TMDB_BASE_URL + endpoint)}`;
+    return `https://corsproxy.io/?${encodeURIComponent(TMDB_BASE_URL + endpoint)}`;
 }
 
 // 2. The API Endpoints 
