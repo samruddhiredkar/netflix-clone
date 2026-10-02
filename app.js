@@ -1,17 +1,21 @@
 // 1. API Configuration
 const API_KEY = "39861cfd811f742259e828847ff86b9c";
-// Using a CORS proxy to bypass ISP blocks for TMDB
-const BASE_URL = "https://api.allorigins.win/raw?url=https%3A%2F%2Fapi.themoviedb.org%2F3";
+const TMDB_BASE_URL = "https://api.themoviedb.org/3";
+
+// Helper function to properly encode the URL so the proxy doesn't strip your API key
+function getProxyUrl(endpoint) {
+    return `https://api.allorigins.win/raw?url=${encodeURIComponent(TMDB_BASE_URL + endpoint)}`;
+}
 
 // 2. The API Endpoints 
 const requests = {
-    fetchTrending: `${BASE_URL}/trending/all/week?api_key=${API_KEY}&language=en-US`,
-    fetchNetflixOriginals: `${BASE_URL}/discover/tv?api_key=${API_KEY}&with_networks=213`,
-    fetchActionMovies: `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=28`,
-    fetchComedyMovies: `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=35`,
-    fetchHorrorMovies: `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=27`,
-    fetchRomanceMovies: `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=10749`,
-    fetchDocumentaries: `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=99`,
+    fetchTrending: getProxyUrl(`/trending/all/week?api_key=${API_KEY}&language=en-US`),
+    fetchNetflixOriginals: getProxyUrl(`/discover/tv?api_key=${API_KEY}&with_networks=213`),
+    fetchActionMovies: getProxyUrl(`/discover/movie?api_key=${API_KEY}&with_genres=28`),
+    fetchComedyMovies: getProxyUrl(`/discover/movie?api_key=${API_KEY}&with_genres=35`),
+    fetchHorrorMovies: getProxyUrl(`/discover/movie?api_key=${API_KEY}&with_genres=27`),
+    fetchRomanceMovies: getProxyUrl(`/discover/movie?api_key=${API_KEY}&with_genres=10749`),
+    fetchDocumentaries: getProxyUrl(`/discover/movie?api_key=${API_KEY}&with_genres=99`),
 };
 
 console.log("My API Key is ready:", API_KEY);
@@ -75,22 +79,19 @@ async function createRow(title, fetchUrl) {
                 poster.src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
                 poster.alt = movie.name || movie.title;
                 
-                // Store ID safely on the DOM node to prevent scope/closure bugs
                 poster.dataset.movieId = movie.id;
 
-                // Click event to fetch trailer (Supports both Movies and TV Shows)
                 poster.addEventListener("click", async () => {
                     const modal = document.getElementById("trailer-modal");
                     const videoContainer = document.getElementById("video-container");
                     const id = poster.dataset.movieId;
                     try {
-                        // Using BASE_URL here so the proxy protects the trailer fetching too
-                        let res = await fetch(`${BASE_URL}/movie/${id}/videos?api_key=${API_KEY}&language=en-US`);
+                        // Trailer fetches routed safely through the proxy helper
+                        let res = await fetch(getProxyUrl(`/movie/${id}/videos?api_key=${API_KEY}&language=en-US`));
                         let videoData = await res.json();
                         
-                        // If no results or not found, try fetching as a TV Show (for Netflix Originals)
                         if (!videoData.results || videoData.results.length === 0) {
-                            res = await fetch(`${BASE_URL}/tv/${id}/videos?api_key=${API_KEY}&language=en-US`);
+                            res = await fetch(getProxyUrl(`/tv/${id}/videos?api_key=${API_KEY}&language=en-US`));
                             videoData = await res.json();
                         }                        
                         
@@ -165,7 +166,8 @@ if (searchInput) {
 
         if (query.length > 2 && rowsContainer) {
             rowsContainer.innerHTML = "";
-            createRow(`Search Results for "${query}"`, `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`);
+            // Search fetches routed safely through the proxy helper
+            createRow(`Search Results for "${query}"`, getProxyUrl(`/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`));
         } else if (query.length === 0) {
             loadDefaultRows();
         }
@@ -179,16 +181,15 @@ if (closeModalBtn) {
         const modal = document.getElementById("trailer-modal");
         const videoContainer = document.getElementById("video-container");
         if (modal) modal.style.display = "none";
-        if (videoContainer) videoContainer.innerHTML = ""; // Stops the YouTube video playback
+        if (videoContainer) videoContainer.innerHTML = ""; 
     });
 }
 
-// Close when clicking anywhere outside the trailer window
 window.addEventListener("click", (event) => {
     const modal = document.getElementById("trailer-modal");
     const videoContainer = document.getElementById("video-container");
     if (event.target === modal) {
         modal.style.display = "none";
-        if (videoContainer) videoContainer.innerHTML = ""; // Stops the YouTube video playback
+        if (videoContainer) videoContainer.innerHTML = ""; 
     }
 });
