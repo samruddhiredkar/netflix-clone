@@ -1,6 +1,7 @@
 // 1. API Configuration
 const API_KEY = "39861cfd811f742259e828847ff86b9c";
-const BASE_URL = "https://api.themoviedb.org/3";
+// Using a CORS proxy to bypass ISP blocks for TMDB
+const BASE_URL = "https://api.allorigins.win/raw?url=https%3A%2F%2Fapi.themoviedb.org%2F3";
 
 // 2. The API Endpoints 
 const requests = {
@@ -77,21 +78,22 @@ async function createRow(title, fetchUrl) {
                 // Store ID safely on the DOM node to prevent scope/closure bugs
                 poster.dataset.movieId = movie.id;
 
-                // Click event to fetch trailer on poster click
                 // Click event to fetch trailer (Supports both Movies and TV Shows)
                 poster.addEventListener("click", async () => {
                     const modal = document.getElementById("trailer-modal");
                     const videoContainer = document.getElementById("video-container");
                     const id = poster.dataset.movieId;
                     try {
-                        // Try fetching as a Movie first
-                        let res = await fetch(`https://api.themoviedb.org/3/movie/${id}/videos?api_key=${API_KEY}&language=en-US`);
+                        // Using BASE_URL here so the proxy protects the trailer fetching too
+                        let res = await fetch(`${BASE_URL}/movie/${id}/videos?api_key=${API_KEY}&language=en-US`);
                         let videoData = await res.json();
+                        
                         // If no results or not found, try fetching as a TV Show (for Netflix Originals)
                         if (!videoData.results || videoData.results.length === 0) {
-                            res = await fetch(`https://api.themoviedb.org/3/tv/${id}/videos?api_key=${API_KEY}&language=en-US`);
+                            res = await fetch(`${BASE_URL}/tv/${id}/videos?api_key=${API_KEY}&language=en-US`);
                             videoData = await res.json();
                         }                        
+                        
                         const trailer = videoData.results.find(vid => vid.site === "YouTube" && (vid.type === "Trailer" || vid.type === "Teaser"));
                         if (trailer) {
                             videoContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${trailer.key}?autoplay=1" allowfullscreen></iframe>`;
@@ -154,17 +156,6 @@ window.addEventListener("scroll", () => {
     }
 });
 
-// Close modal event
-const closeModalBtn = document.getElementById("close-modal");
-if (closeModalBtn) {
-    closeModalBtn.addEventListener("click", () => {
-        const modal = document.getElementById("trailer-modal");
-        const videoContainer = document.getElementById("video-container");
-        if (modal) modal.style.display = "none";
-        if (videoContainer) videoContainer.innerHTML = "";
-    });
-}
-
 // 7. Live search event listener
 const searchInput = document.getElementById("search-input");
 if (searchInput) {
@@ -181,8 +172,8 @@ if (searchInput) {
     });
 }
 
-// Close modal when clicking the 'X' button
-// Use your existing variables safely without redeclaring them
+// 8. Modal Close Handlers
+const closeModalBtn = document.getElementById("close-modal");
 if (closeModalBtn) {
     closeModalBtn.addEventListener("click", () => {
         const modal = document.getElementById("trailer-modal");
