@@ -1,22 +1,17 @@
 // 1. API Configuration
 const API_KEY = "39861cfd811f742259e828847ff86b9c";
-const TMDB_BASE_URL = "https://api.themoviedb.org/3";
-
-// Helper function to properly encode the URL so the proxy doesn't strip your API key
-// Helper function using a different, Vercel-friendly CORS proxy
-function getProxyUrl(endpoint) {
-    return `https://corsproxy.io/?${encodeURIComponent(TMDB_BASE_URL + endpoint)}`;
-}
+// Pointing to the Vercel backend rewrite we just created!
+const BASE_URL = "/api/tmdb";
 
 // 2. The API Endpoints 
 const requests = {
-    fetchTrending: getProxyUrl(`/trending/all/week?api_key=${API_KEY}&language=en-US`),
-    fetchNetflixOriginals: getProxyUrl(`/discover/tv?api_key=${API_KEY}&with_networks=213`),
-    fetchActionMovies: getProxyUrl(`/discover/movie?api_key=${API_KEY}&with_genres=28`),
-    fetchComedyMovies: getProxyUrl(`/discover/movie?api_key=${API_KEY}&with_genres=35`),
-    fetchHorrorMovies: getProxyUrl(`/discover/movie?api_key=${API_KEY}&with_genres=27`),
-    fetchRomanceMovies: getProxyUrl(`/discover/movie?api_key=${API_KEY}&with_genres=10749`),
-    fetchDocumentaries: getProxyUrl(`/discover/movie?api_key=${API_KEY}&with_genres=99`),
+    fetchTrending: `${BASE_URL}/trending/all/week?api_key=${API_KEY}&language=en-US`,
+    fetchNetflixOriginals: `${BASE_URL}/discover/tv?api_key=${API_KEY}&with_networks=213`,
+    fetchActionMovies: `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=28`,
+    fetchComedyMovies: `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=35`,
+    fetchHorrorMovies: `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=27`,
+    fetchRomanceMovies: `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=10749`,
+    fetchDocumentaries: `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=99`,
 };
 
 console.log("My API Key is ready:", API_KEY);
@@ -87,12 +82,11 @@ async function createRow(title, fetchUrl) {
                     const videoContainer = document.getElementById("video-container");
                     const id = poster.dataset.movieId;
                     try {
-                        // Trailer fetches routed safely through the proxy helper
-                        let res = await fetch(getProxyUrl(`/movie/${id}/videos?api_key=${API_KEY}&language=en-US`));
+                        let res = await fetch(`${BASE_URL}/movie/${id}/videos?api_key=${API_KEY}&language=en-US`);
                         let videoData = await res.json();
                         
                         if (!videoData.results || videoData.results.length === 0) {
-                            res = await fetch(getProxyUrl(`/tv/${id}/videos?api_key=${API_KEY}&language=en-US`));
+                            res = await fetch(`${BASE_URL}/tv/${id}/videos?api_key=${API_KEY}&language=en-US`);
                             videoData = await res.json();
                         }                        
                         
@@ -167,8 +161,7 @@ if (searchInput) {
 
         if (query.length > 2 && rowsContainer) {
             rowsContainer.innerHTML = "";
-            // Search fetches routed safely through the proxy helper
-            createRow(`Search Results for "${query}"`, getProxyUrl(`/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`));
+            createRow(`Search Results for "${query}"`, `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`);
         } else if (query.length === 0) {
             loadDefaultRows();
         }
